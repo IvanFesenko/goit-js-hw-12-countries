@@ -1,6 +1,4 @@
-// import './notify';
-// import fetchCountries from './fetchCountries';
-import { alert, notice, info, success, error } from '@pnotify/core';
+import error from './notify';
 import selectListTemplate from '../templates/countrySelectList.hbs';
 import selectedCountryTemplate from '../templates/selectedCountry.hbs';
 
@@ -22,7 +20,9 @@ function fetchCountries(searchQuery) {
       статус ошибки ${response.status}!`);
     })
     .catch(err => {
-      throw new Error(err);
+      error({
+        title: 'Wrong query! Please try again',
+      });
     });
 }
 
@@ -36,20 +36,21 @@ function onChangeInput(event) {
 }
 
 function processResult(countries) {
-  //delete
-  console.log(countries);
-  //delete
+  if (!countries) {
+    error({
+      title: 'Wrong query! Please try again',
+    });
+    return;
+  }
   if (countries.length === 1) {
     generetaSelectedCountry(countries[0]);
   } else if (countries.length > 1 && countries.length < 11) {
     refs.countriesList = countries;
     generateCountrySelectList(countries);
   } else {
-    console.log('error');
-    const myError = error({
-      text: "I'm an error message.",
+    error({
+      title: 'To many mathches found. Please enter a more specific query!',
     });
-    console.log(myError);
   }
 }
 
